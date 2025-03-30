@@ -13,15 +13,17 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => IconColorProvider(),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return const CupertinoApp(
       debugShowCheckedModeBanner: false,
       home: MainPage(),
     );
@@ -29,6 +31,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -43,15 +47,15 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> getWeatherData() async {
     try {
-      String apiKey = "71d4a365d488f44341a160cdbf0e97fa";
-      String link = "https://api.openweathermap.org/data/2.5/weather?q=$location&appid=$apiKey";
+      const String apiKey = "71d4a365d488f44341a160cdbf0e97fa";
+      final Uri url = Uri.parse("https://api.openweathermap.org/data/2.5/weather?q=$location&appid=$apiKey");
 
-      final response = await http.get(Uri.parse(link));
-      Map<String, dynamic> weatherData = jsonDecode(response.body);
+      final response = await http.get(url);
+      final Map<String, dynamic> weatherData = jsonDecode(response.body);
 
       if (weatherData["cod"] == 200) {
         setState(() {
-          temp = (weatherData["main"]["temp"] - 273.15).toStringAsFixed(0) + "°";
+          temp = "${(weatherData["main"]["temp"] - 273.15).toStringAsFixed(0)}°";
           weather = weatherData["weather"][0]["description"];
           humidity = "${weatherData["main"]["humidity"]}%";
           windSpeed = "${weatherData["wind"]["speed"]} kph";
@@ -75,27 +79,23 @@ class _MainPageState extends State<MainPage> {
   void _showErrorDialog(String message) {
     showCupertinoDialog(
       context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: Text('Message'),
-          content: Text(message),
-          actions: [
-            CupertinoButton(
-              child: Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            CupertinoButton(
-              child: Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
-              onPressed: () {
-                Navigator.pop(context);
-                getWeatherData();
-              },
-            ),
-          ],
-        );
-      },
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Message'),
+        content: Text(message),
+        actions: [
+          CupertinoButton(
+            child: const Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
+            onPressed: () => Navigator.pop(context),
+          ),
+          CupertinoButton(
+            child: const Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
+            onPressed: () {
+              Navigator.pop(context);
+              getWeatherData();
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -105,7 +105,7 @@ class _MainPageState extends State<MainPage> {
       CupertinoPageRoute(builder: (context) => SettingsPage(initialLocation: location)),
     );
 
-    if (result != null) {
+    if (result != null && result is String) {
       setState(() {
         location = result;
         getWeatherData();
@@ -124,40 +124,42 @@ class _MainPageState extends State<MainPage> {
     final iconColor = Provider.of<IconColorProvider>(context).color;
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text("iWeather"),
+        middle: const Text("iWeather"),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: Icon(CupertinoIcons.settings),
+          child: const Icon(CupertinoIcons.settings),
           onPressed: _openSettings,
         ),
       ),
       child: SafeArea(
-        child: temp != ""
+        child: temp.isNotEmpty
             ? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 50),
-              Text("My Location", style: TextStyle(fontSize: 35)),
-              SizedBox(height: 10),
-              Text(location),
-              SizedBox(height: 10),
-              Text(temp, style: TextStyle(fontSize: 80)),
-              SizedBox(height: 10),
+              const SizedBox(height: 50),
+              const Text("My Location", style: TextStyle(fontSize: 35)),
+              const SizedBox(height: 10),
+              Text(location, style: const TextStyle(fontSize: 20)),
+              const SizedBox(height: 10),
+              Text(temp, style: const TextStyle(fontSize: 80)),
+              const SizedBox(height: 10),
               Icon(weatherStatus, color: iconColor, size: 100),
-              SizedBox(height: 10),
-              Text(weather),
+              const SizedBox(height: 10),
+              Text(weather, style: const TextStyle(fontSize: 20)),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('H: $humidity'),
-                  SizedBox(width: 10),
-                  Text('W: $windSpeed'),
+                  Text('H: $humidity', style: const TextStyle(fontSize: 18)),
+                  const SizedBox(width: 10),
+                  Text('W: $windSpeed', style: const TextStyle(fontSize: 18)),
                 ],
               ),
             ],
           ),
         )
-            : Center(child: CupertinoActivityIndicator()),
+            : const Center(child: CupertinoActivityIndicator()),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get_storage/get_storage.dart';
 
 class IconColorProvider extends ChangeNotifier {
-  final _box = GetStorage();
+  final GetStorage _box = GetStorage();
   Color _color = CupertinoColors.systemRed; // Default color
 
   IconColorProvider() {
@@ -11,17 +11,19 @@ class IconColorProvider extends ChangeNotifier {
 
   Color get color => _color;
 
-  void _loadColor() {
+  Future<void> _loadColor() async {
     int? colorValue = _box.read('iconColor');
-    if (colorValue != null) {
+    if (colorValue != null && colorValue != _color.value) {
       _color = Color(colorValue);
+      notifyListeners(); // Notify only if the color changes
     }
-    notifyListeners();
   }
 
   void updateColor(Color newColor) {
-    _color = newColor;
-    _box.write('iconColor', newColor.value); // Save color persistently
-    notifyListeners();
+    if (newColor != _color) {
+      _color = newColor;
+      _box.write('iconColor', newColor.value); // Save color persistently
+      notifyListeners();
+    }
   }
 }
