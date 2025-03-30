@@ -6,7 +6,7 @@ import 'about.dart';
 class SettingsPage extends StatefulWidget {
   final String initialLocation;
 
-  const SettingsPage({Key? key, required this.initialLocation}) : super(key: key);
+  const SettingsPage({super.key, required this.initialLocation});
 
   @override
   _SettingsPageState createState() => _SettingsPageState();

@@ -19,7 +19,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +31,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
-  _MainPageState createState() => _MainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
@@ -47,11 +47,11 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> getWeatherData() async {
     try {
-      const String apiKey = "71d4a365d488f44341a160cdbf0e97fa";
-      final Uri url = Uri.parse("https://api.openweathermap.org/data/2.5/weather?q=$location&appid=$apiKey");
+      String apiKey = "71d4a365d488f44341a160cdbf0e97fa";
+      String link = "https://api.openweathermap.org/data/2.5/weather?q=$location&appid=$apiKey";
 
-      final response = await http.get(url);
-      final Map<String, dynamic> weatherData = jsonDecode(response.body);
+      final response = await http.get(Uri.parse(link));
+      Map<String, dynamic> weatherData = jsonDecode(response.body);
 
       if (weatherData["cod"] == 200) {
         setState(() {
@@ -79,23 +79,25 @@ class _MainPageState extends State<MainPage> {
   void _showErrorDialog(String message) {
     showCupertinoDialog(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Message'),
-        content: Text(message),
-        actions: [
-          CupertinoButton(
-            child: const Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
-            onPressed: () => Navigator.pop(context),
-          ),
-          CupertinoButton(
-            child: const Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
-            onPressed: () {
-              Navigator.pop(context);
-              getWeatherData();
-            },
-          ),
-        ],
-      ),
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('Message'),
+          content: Text(message),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
+              onPressed: () => Navigator.pop(context),
+            ),
+            CupertinoDialogAction(
+              child: const Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
+              onPressed: () {
+                Navigator.pop(context);
+                getWeatherData();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -105,7 +107,7 @@ class _MainPageState extends State<MainPage> {
       CupertinoPageRoute(builder: (context) => SettingsPage(initialLocation: location)),
     );
 
-    if (result != null && result is String) {
+    if (result != null) {
       setState(() {
         location = result;
         getWeatherData();
@@ -137,23 +139,21 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 50),
               const Text("My Location", style: TextStyle(fontSize: 35)),
               const SizedBox(height: 10),
-              Text(location, style: const TextStyle(fontSize: 20)),
+              Text(location),
               const SizedBox(height: 10),
               Text(temp, style: const TextStyle(fontSize: 80)),
               const SizedBox(height: 10),
               Icon(weatherStatus, color: iconColor, size: 100),
               const SizedBox(height: 10),
-              Text(weather, style: const TextStyle(fontSize: 20)),
-              const SizedBox(height: 10),
+              Text(weather),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('H: $humidity', style: const TextStyle(fontSize: 18)),
+                  Text('H: $humidity'),
                   const SizedBox(width: 10),
-                  Text('W: $windSpeed', style: const TextStyle(fontSize: 18)),
+                  Text('W: $windSpeed'),
                 ],
               ),
             ],

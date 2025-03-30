@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,8 @@ class AboutPage extends StatelessWidget {
 
 class _MemberTile extends StatelessWidget {
   final String name;
-  const _MemberTile({Key? key, required this.name}) : super(key: key);
+
+  const _MemberTile({required this.name});
 
   @override
   Widget build(BuildContext context) {
