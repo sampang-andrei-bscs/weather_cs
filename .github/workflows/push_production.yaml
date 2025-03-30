@@ -1,0 +1,44 @@
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+
+      - name: Analyze project source
+        run: flutter analyze
+
+      - name: Ensure App Builds
+        run: flutter build apk --release
+
+      - name: Create Git Tag
+        id: tag
+        run: |
+          TAG_NAME=v1.0.${{github.run_number}}
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+
+      - name: Upload Release to Github
+        uses: ncipollo/release-action@v1
+        with:
+          name: "Release v1.0.${{ github.run_number }}"
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+          tag: ${{ env.TAG_NAME }}
+          token: $ {{ secrets.GITHUB_TOKEN }}
+
+
