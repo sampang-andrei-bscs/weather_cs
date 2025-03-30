@@ -6,13 +6,13 @@ import 'about.dart';
 class SettingsPage extends StatefulWidget {
   final String initialLocation;
 
-  SettingsPage({required this.initialLocation});
+  const SettingsPage({super.key, required this.initialLocation});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  SettingsPageState createState() => SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPageState extends State<SettingsPage> {
   late String location;
 
   @override
@@ -27,14 +27,14 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: Text('Location'),
+          title: const Text('Location'),
           content: CupertinoTextField(
             controller: controller,
             placeholder: "Enter City",
           ),
           actions: [
             CupertinoDialogAction(
-              child: Text('Save', style: TextStyle(color: CupertinoColors.activeBlue)),
+              child: const Text('Save', style: TextStyle(color: CupertinoColors.activeBlue)),
               onPressed: () {
                 setState(() {
                   location = controller.text;
@@ -44,10 +44,8 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             CupertinoDialogAction(
-              child: Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              child: const Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
+              onPressed: () => Navigator.pop(context),
             ),
           ],
         );
@@ -60,40 +58,27 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (context) {
         return CupertinoActionSheet(
-          title: Text("Select Icon Color"),
+          title: const Text("Select Icon Color"),
           actions: [
-            CupertinoActionSheetAction(
-              child: Text("Red", style: TextStyle(color: CupertinoColors.systemRed)),
-              onPressed: () {
-                Provider.of<IconColorProvider>(context, listen: false)
-                    .updateColor(CupertinoColors.systemRed);
-                Navigator.pop(context);
-              },
-            ),
-            CupertinoActionSheetAction(
-              child: Text("Blue", style: TextStyle(color: CupertinoColors.systemBlue)),
-              onPressed: () {
-                Provider.of<IconColorProvider>(context, listen: false)
-                    .updateColor(CupertinoColors.systemBlue);
-                Navigator.pop(context);
-              },
-            ),
-            CupertinoActionSheetAction(
-              child: Text("Green", style: TextStyle(color: CupertinoColors.systemGreen)),
-              onPressed: () {
-                Provider.of<IconColorProvider>(context, listen: false)
-                    .updateColor(CupertinoColors.systemGreen);
-                Navigator.pop(context);
-              },
-            ),
+            _buildColorAction("Red", CupertinoColors.systemRed),
+            _buildColorAction("Blue", CupertinoColors.systemBlue),
+            _buildColorAction("Green", CupertinoColors.systemGreen),
           ],
           cancelButton: CupertinoActionSheetAction(
-            child: Text("Cancel", style: TextStyle(color: CupertinoColors.destructiveRed)),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            child: const Text("Cancel", style: TextStyle(color: CupertinoColors.destructiveRed)),
+            onPressed: () => Navigator.pop(context),
           ),
         );
+      },
+    );
+  }
+
+  CupertinoActionSheetAction _buildColorAction(String label, Color color) {
+    return CupertinoActionSheetAction(
+      child: Text(label, style: TextStyle(color: color)),
+      onPressed: () {
+        Provider.of<IconColorProvider>(context, listen: false).updateColor(color);
+        Navigator.pop(context);
       },
     );
   }
@@ -101,7 +86,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _navigateToAbout() {
     Navigator.push(
       context,
-      CupertinoPageRoute(builder: (context) => AboutPage()),
+      CupertinoPageRoute(builder: (context) => const AboutPage()),
     );
   }
 
@@ -110,32 +95,50 @@ class _SettingsPageState extends State<SettingsPage> {
     final iconColor = Provider.of<IconColorProvider>(context).color;
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
+      navigationBar: const CupertinoNavigationBar(
         middle: Text("Settings"),
       ),
       child: SafeArea(
         child: Column(
           children: [
-            CupertinoListTile(
-              leading: Icon(CupertinoIcons.location, color: CupertinoColors.systemOrange),
-              title: Text("Location"),
+            _buildSettingsTile(
+              icon: CupertinoIcons.location,
+              iconColor: CupertinoColors.systemOrange,
+              title: "Location",
               trailing: Text(location),
               onTap: _changeLocation,
             ),
-            CupertinoListTile(
-              leading: Icon(CupertinoIcons.paintbrush, color: iconColor),
-              title: Text("Change Icon Color"),
-              trailing: Icon(CupertinoIcons.chevron_forward),
+            _buildSettingsTile(
+              icon: CupertinoIcons.paintbrush,
+              iconColor: iconColor,
+              title: "Change Icon Color",
+              trailing: const Icon(CupertinoIcons.chevron_forward),
               onTap: _changeIconColor,
             ),
-            CupertinoListTile(
-              leading: Icon(CupertinoIcons.info, color: CupertinoColors.systemBlue),
-              title: Text("About"),
+            _buildSettingsTile(
+              icon: CupertinoIcons.info,
+              iconColor: CupertinoColors.systemBlue,
+              title: "About",
               onTap: _navigateToAbout,
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    Widget? trailing,
+    required VoidCallback onTap,
+  }) {
+    return CupertinoListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(title),
+      trailing: trailing,
+      onTap: onTap,
     );
   }
 }
