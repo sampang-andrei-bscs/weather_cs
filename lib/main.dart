@@ -13,15 +13,17 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => IconColorProvider(),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key}); // Added key parameter
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return const CupertinoApp(
       debugShowCheckedModeBanner: false,
       home: MainPage(),
     );
@@ -29,11 +31,13 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key}); // Added key parameter
+
   @override
-  _MainPageState createState() => _MainPageState();
+  MainPageState createState() => MainPageState(); // Removed underscore to make it public
 }
 
-class _MainPageState extends State<MainPage> {
+class MainPageState extends State<MainPage> { // Class is now public
   String location = "Arayat";
   String temp = "";
   IconData? weatherStatus;
@@ -51,7 +55,7 @@ class _MainPageState extends State<MainPage> {
 
       if (weatherData["cod"] == 200) {
         setState(() {
-          temp = (weatherData["main"]["temp"] - 273.15).toStringAsFixed(0) + "°";
+          temp = "${(weatherData["main"]["temp"] - 273.15).toStringAsFixed(0)}°";
           weather = weatherData["weather"][0]["description"];
           humidity = "${weatherData["main"]["humidity"]}%";
           windSpeed = "${weatherData["wind"]["speed"]} kph";
@@ -77,17 +81,17 @@ class _MainPageState extends State<MainPage> {
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: Text('Message'),
+          title: const Text('Message'),
           content: Text(message),
           actions: [
             CupertinoButton(
-              child: Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
+              child: const Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             CupertinoButton(
-              child: Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
+              child: const Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
               onPressed: () {
                 Navigator.pop(context);
                 getWeatherData();
@@ -124,40 +128,40 @@ class _MainPageState extends State<MainPage> {
     final iconColor = Provider.of<IconColorProvider>(context).color;
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text("iWeather"),
+        middle: const Text("iWeather"),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _openSettings,
-          child: Icon(CupertinoIcons.settings),
+          child: const Icon(CupertinoIcons.settings),
         ),
       ),
       child: SafeArea(
-        child: temp != ""
+        child: temp.isNotEmpty
             ? Center(
           child: Column(
             children: [
-              SizedBox(height: 50),
-              Text("My Location", style: TextStyle(fontSize: 35)),
-              SizedBox(height: 10),
+              const SizedBox(height: 50),
+              const Text("My Location", style: TextStyle(fontSize: 35)),
+              const SizedBox(height: 10),
               Text(location),
-              SizedBox(height: 10),
-              Text(temp, style: TextStyle(fontSize: 80)),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
+              Text(temp, style: const TextStyle(fontSize: 80)),
+              const SizedBox(height: 10),
               Icon(weatherStatus, color: iconColor, size: 100),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(weather),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('H: $humidity'),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text('W: $windSpeed'),
                 ],
               ),
             ],
           ),
         )
-            : Center(child: CupertinoActivityIndicator()),
+            : const Center(child: CupertinoActivityIndicator()),
       ),
     );
   }

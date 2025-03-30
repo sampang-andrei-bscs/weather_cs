@@ -26,7 +26,7 @@ class IconColorProvider extends ChangeNotifier {
 
   void updateColor(Color newColor) {
     _color = newColor;
-    _box.write('iconColor', newColor.value);
+    color.toARGB32();
     notifyListeners();
   }
 }
