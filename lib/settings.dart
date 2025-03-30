@@ -9,10 +9,10 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key, required this.initialLocation});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  SettingsPageState createState() => SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPageState extends State<SettingsPage> {
   late String location;
 
   @override

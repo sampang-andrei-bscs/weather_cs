@@ -13,17 +13,15 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => IconColorProvider(),
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const CupertinoApp(
+    return CupertinoApp(
       debugShowCheckedModeBanner: false,
       home: MainPage(),
     );
@@ -31,10 +29,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-
   @override
-  State<MainPage> createState() => _MainPageState();
+  _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
@@ -55,7 +51,7 @@ class _MainPageState extends State<MainPage> {
 
       if (weatherData["cod"] == 200) {
         setState(() {
-          temp = "${(weatherData["main"]["temp"] - 273.15).toStringAsFixed(0)}°";
+          temp = (weatherData["main"]["temp"] - 273.15).toStringAsFixed(0) + "°";
           weather = weatherData["weather"][0]["description"];
           humidity = "${weatherData["main"]["humidity"]}%";
           windSpeed = "${weatherData["wind"]["speed"]} kph";
@@ -81,15 +77,17 @@ class _MainPageState extends State<MainPage> {
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: const Text('Message'),
+          title: Text('Message'),
           content: Text(message),
           actions: [
-            CupertinoDialogAction(
-              child: const Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
-              onPressed: () => Navigator.pop(context),
+            CupertinoButton(
+              child: Text('Close', style: TextStyle(color: CupertinoColors.destructiveRed)),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            CupertinoDialogAction(
-              child: const Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
+            CupertinoButton(
+              child: Text('Retry', style: TextStyle(color: CupertinoColors.systemGreen)),
               onPressed: () {
                 Navigator.pop(context);
                 getWeatherData();
@@ -126,40 +124,40 @@ class _MainPageState extends State<MainPage> {
     final iconColor = Provider.of<IconColorProvider>(context).color;
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text("iWeather"),
+        middle: Text("iWeather"),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.settings),
           onPressed: _openSettings,
+          child: Icon(CupertinoIcons.settings),
         ),
       ),
       child: SafeArea(
-        child: temp.isNotEmpty
+        child: temp != ""
             ? Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("My Location", style: TextStyle(fontSize: 35)),
-              const SizedBox(height: 10),
+              SizedBox(height: 50),
+              Text("My Location", style: TextStyle(fontSize: 35)),
+              SizedBox(height: 10),
               Text(location),
-              const SizedBox(height: 10),
-              Text(temp, style: const TextStyle(fontSize: 80)),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
+              Text(temp, style: TextStyle(fontSize: 80)),
+              SizedBox(height: 10),
               Icon(weatherStatus, color: iconColor, size: 100),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Text(weather),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('H: $humidity'),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Text('W: $windSpeed'),
                 ],
               ),
             ],
           ),
         )
-            : const Center(child: CupertinoActivityIndicator()),
+            : Center(child: CupertinoActivityIndicator()),
       ),
     );
   }

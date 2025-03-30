@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 
 class IconColorProvider extends ChangeNotifier {
   final _box = GetStorage();
-  Color _color = CupertinoColors.systemRed; // Default color
+  Color _color = CupertinoColors.systemRed;
 
   IconColorProvider() {
     _loadColor();
@@ -26,7 +26,7 @@ class IconColorProvider extends ChangeNotifier {
 
   void updateColor(Color newColor) {
     _color = newColor;
-    _box.write('iconColor', newColor.toARGB32()); // Save color persistently
+    _box.write('iconColor', newColor.value);
     notifyListeners();
   }
 }
